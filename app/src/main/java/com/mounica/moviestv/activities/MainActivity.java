@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.mounica.moviestv.R;
 import com.mounica.moviestv.adapter.NowShowingAdapter;
+import com.mounica.moviestv.adapter.PaginationListener;
 import com.mounica.moviestv.dataobjects.GenreList;
 import com.mounica.moviestv.dataobjects.NowShowingMovies;
 import com.mounica.moviestv.dataobjects.NowShowingMoviesResults;
@@ -26,40 +28,76 @@ public class MainActivity extends AppCompatActivity {
   private List<NowShowingMovies> mNowShowingMovies;
   private RecyclerView mRecyclerView;
   private NowShowingAdapter mNowShowingAdapter;
+  private ProgressBar mProgressBar;
+  private LinearLayoutManager mLinearLayoutManager;
+  private int mTotalPages = 5;
+  private int mCurrentPage = 1;
+  private boolean isLastPage = false;
+  private boolean isLoading = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
+    mProgressBar = findViewById(R.id.progressbar);
     mNowShowingMovies = new ArrayList<>();
     mRecyclerView = findViewById(R.id.recyclerview);
-    mRecyclerView.setLayoutManager(
-        new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+    mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+    mRecyclerView.setLayoutManager(mLinearLayoutManager);
     mNowShowingAdapter = new NowShowingAdapter(this, mNowShowingMovies);
     mRecyclerView.setAdapter(mNowShowingAdapter);
+    mRecyclerView.addOnScrollListener(new PaginationListener(mLinearLayoutManager) {
+      @Override
+      protected void loadMoreItems() {
+        isLoading = true;
+        mCurrentPage += mCurrentPage;
+        loadNextPage();
+      }
+
+      @Override
+      public int getTotalPageCount() {
+        return mTotalPages;
+      }
+
+      @Override
+      public boolean isLastPage() {
+        return isLastPage;
+      }
+
+      @Override
+      public boolean isLoading() {
+        return isLoading;
+      }
+    });
     //Load Genres
     if (!GenreMap.isGenreListLoaded()) {
       loadGenres();
     }
-    loadNowShowingMovies();
+    loadFirstPage();
   }
 
-  private void loadNowShowingMovies() {
-    MoviesApi moviesResults = MoviesApiClient.getClient().create(MoviesApi.class);
-    Call<NowShowingMoviesResults> call = moviesResults
-        .getNowShowingMovies(getResources().getString(R.string.API_KEY), 1, "US");
-    call.enqueue(new Callback<NowShowingMoviesResults>() {
+  private Call<NowShowingMoviesResults> makeAPICall() {
+    return MoviesApiClient.getClient().create(MoviesApi.class)
+        .getNowShowingMovies(getResources().getString(R.string.API_KEY), mCurrentPage, "US");
+  }
+
+  private void loadFirstPage() {
+    makeAPICall().enqueue(new Callback<NowShowingMoviesResults>() {
       @Override
       public void onResponse(Call<NowShowingMoviesResults> call,
           Response<NowShowingMoviesResults> response) {
         Log.i(TAG, "in Response-now showing movies");
         if (response.isSuccessful()) {
-          //just add the movies list ignoring number of pages
+          //total pages declared as 5
+//          mTotalPages = response.body().getTotalPages();
           for (NowShowingMovies movieBrief : response.body().getResults()) {
             if (movieBrief != null && movieBrief.getBackdropPath() != null) {
               mNowShowingMovies.add(movieBrief);
             }
+          }
+          if (mCurrentPage > mTotalPages) {
+            isLastPage = true;
           }
           mNowShowingAdapter.notifyDataSetChanged();
           //TODO implement looping through all pages
@@ -71,6 +109,34 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, t.getMessage());
         Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_LONG)
             .show();
+      }
+    });
+  }
+
+  private void loadNextPage() {
+    makeAPICall().enqueue(new Callback<NowShowingMoviesResults>() {
+      @Override
+      public void onResponse(Call<NowShowingMoviesResults> call,
+          Response<NowShowingMoviesResults> response) {
+        if (response.isSuccessful()) {
+          Log.i(TAG, "onResponse: " + mCurrentPage);
+          isLoading = false;
+          for (NowShowingMovies movieBrief : response.body().getResults()) {
+            if (movieBrief != null && movieBrief.getBackdropPath() != null) {
+              mNowShowingMovies.add(movieBrief);
+            }
+          }
+          if (mCurrentPage == mTotalPages) {
+            isLastPage = true;
+          }
+          mNowShowingAdapter.notifyDataSetChanged();
+        }
+      }
+
+      @Override
+      public void onFailure(Call<NowShowingMoviesResults> call, Throwable t) {
+        Log.i(TAG, "onFailure: " + t.getMessage());
+
       }
     });
   }
