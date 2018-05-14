@@ -3,10 +3,12 @@ package com.mounica.moviestv.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.mounica.moviestv.R;
@@ -19,10 +21,14 @@ import java.util.List;
  * Created by mounicachikkam on 5/9/18.
  */
 
-public class NowShowingAdapter extends RecyclerView.Adapter<NowShowingAdapter.nowPlayingMoviesHolder> {
+public class NowShowingAdapter extends
+    RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   List<NowShowingMovies> mNowShowingMoviesList;
   Context mContext;
+  private static final int ITEM = 0;
+  private static final int LOADING = 1;
+  private boolean isLoadingAdded = false;
 
   public NowShowingAdapter(Context context, List<NowShowingMovies> nowShowingMoviesList) {
     mContext = context;
@@ -31,27 +37,44 @@ public class NowShowingAdapter extends RecyclerView.Adapter<NowShowingAdapter.no
 
   @NonNull
   @Override
-  public nowPlayingMoviesHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    View view = LayoutInflater.from(mContext).inflate(R.layout.now_playing_movies,null);
-    return new nowPlayingMoviesHolder(view);
+  public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    RecyclerView.ViewHolder viewHolder = null;
+    switch(viewType) {
+      case ITEM:
+        View view = LayoutInflater.from(mContext).inflate(R.layout.now_playing_movies, null);
+        viewHolder = new nowPlayingMoviesHolder(view);
+      break;
+      case LOADING:
+        View progress = LayoutInflater.from(mContext).inflate(R.layout.item_progress,null);
+        viewHolder = new loadingProgress(progress);
+        break;
+    }
+  return viewHolder;
   }
 
   @Override
-  public void onBindViewHolder(@NonNull nowPlayingMoviesHolder holder, int position) {
+  public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
     NowShowingMovies movie = mNowShowingMoviesList.get(position);
-    Glide.with(mContext)
-        .load(Constants.BASE_URL_MOVIEBACKDROP_780+movie.getBackdropPath())
-        .asBitmap()
-        .into(holder.mBackDrop);
-    holder.mTitle.setText(movie.getTitle());
-    //get genres
-    List<Integer> genreIds = movie.getGenreIds();
-    String genreText = "";
-    for(Integer genreId:genreIds){
-      genreText += GenreMap.getGenreName(genreId) + ",";
+    switch(getItemViewType(position)){
+      case ITEM:
+        nowPlayingMoviesHolder moviesHolder = (nowPlayingMoviesHolder) holder;
+        Glide.with(mContext)
+            .load(Constants.BASE_URL_MOVIEBACKDROP_780 + movie.getBackdropPath())
+            .asBitmap()
+            .into(moviesHolder.mBackDrop);
+        moviesHolder.mTitle.setText(movie.getTitle());
+        //get genres
+        List<Integer> genreIds = movie.getGenreIds();
+        String genreText = "";
+        for (Integer genreId : genreIds) {
+          genreText += GenreMap.getGenreName(genreId) + ",";
+        }
+        moviesHolder.mGenre.setText(genreText.substring(0, genreText.length() - 1));
+        moviesHolder.mVoteAverage.setText(Double.toString(movie.getVoteAverage()));
+        break;
+      case LOADING:
+        break;
     }
-    holder.mGenre.setText(genreText.substring(0,genreText.length()-1));
-    holder.mVoteAverage.setText(Double.toString(movie.getVoteAverage()));
   }
 
   @Override
@@ -59,12 +82,17 @@ public class NowShowingAdapter extends RecyclerView.Adapter<NowShowingAdapter.no
     return mNowShowingMoviesList.size();
   }
 
-  public class nowPlayingMoviesHolder extends RecyclerView.ViewHolder {
+  @Override
+  public int getItemViewType(int position) {
+    return (position == mNowShowingMoviesList.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
+  }
 
-    public ImageView mBackDrop;
-    public TextView mTitle;
-    public TextView mGenre;
-    public TextView mVoteAverage;
+  protected class nowPlayingMoviesHolder extends RecyclerView.ViewHolder {
+
+    private ImageView mBackDrop;
+    private TextView mTitle;
+    private TextView mGenre;
+    private TextView mVoteAverage;
 
     public nowPlayingMoviesHolder(View itemView) {
       super(itemView);
@@ -72,6 +100,12 @@ public class NowShowingAdapter extends RecyclerView.Adapter<NowShowingAdapter.no
       mGenre = itemView.findViewById(R.id.genre);
       mVoteAverage = itemView.findViewById(R.id.voteaverage);
       mTitle = itemView.findViewById(R.id.movietitle);
+    }
+  }
+
+  protected class loadingProgress extends RecyclerView.ViewHolder{
+    public loadingProgress(View progressView){
+      super(progressView);
     }
   }
 }
