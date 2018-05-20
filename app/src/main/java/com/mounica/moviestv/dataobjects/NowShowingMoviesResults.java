@@ -19,9 +19,9 @@ public class NowShowingMoviesResults {
   @SerializedName("total_results")
   @Expose
   private int totalResults;
-  @SerializedName("dates")
-  @Expose
-  private Dates dates;
+//  @SerializedName("dates")
+//  @Expose
+//  private Dates dates;
   @SerializedName("total_pages")
   @Expose
   private int totalPages;
@@ -65,18 +65,18 @@ public class NowShowingMoviesResults {
     return this;
   }
 
-  public Dates getDates() {
-    return dates;
-  }
-
-  public void setDates(Dates dates) {
-    this.dates = dates;
-  }
-
-  public NowShowingMoviesResults withDates(Dates dates) {
-    this.dates = dates;
-    return this;
-  }
+//  public Dates getDates() {
+//    return dates;
+//  }
+//
+//  public void setDates(Dates dates) {
+//    this.dates = dates;
+//  }
+//
+//  public NowShowingMoviesResults withDates(Dates dates) {
+//    this.dates = dates;
+//    return this;
+//  }
 
   public int getTotalPages() {
     return totalPages;

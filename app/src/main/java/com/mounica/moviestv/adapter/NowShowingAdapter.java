@@ -17,10 +17,6 @@ import com.mounica.moviestv.helper.Constants;
 import com.mounica.moviestv.helper.GenreMap;
 import java.util.List;
 
-/**
- * Created by mounicachikkam on 5/9/18.
- */
-
 public class NowShowingAdapter extends
     RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -73,6 +69,7 @@ public class NowShowingAdapter extends
         moviesHolder.mVoteAverage.setText(Double.toString(movie.getVoteAverage()));
         break;
       case LOADING:
+      default:
         break;
     }
   }

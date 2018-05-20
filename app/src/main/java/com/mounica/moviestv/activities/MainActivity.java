@@ -6,10 +6,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Toast;
 import com.mounica.moviestv.R;
 import com.mounica.moviestv.adapter.NowShowingAdapter;
 import com.mounica.moviestv.adapter.PaginationListener;
+import com.mounica.moviestv.adapter.PopularMoviesAdapter;
 import com.mounica.moviestv.dataobjects.GenreList;
 import com.mounica.moviestv.dataobjects.NowShowingMovies;
 import com.mounica.moviestv.dataobjects.NowShowingMoviesResults;
@@ -26,8 +28,11 @@ public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = "MainActivity";
   private List<NowShowingMovies> mNowShowingMovies;
-  private RecyclerView mRecyclerView;
+  private List<NowShowingMovies> mPopularMovies;
+  private ScrollView mScrollView;
+  private RecyclerView mRvNowShowing, mRvPopular;
   private NowShowingAdapter mNowShowingAdapter;
+  private PopularMoviesAdapter mPopularMoviesAdapter;
   private ProgressBar mProgressBar;
   private LinearLayoutManager mLinearLayoutManager;
   private int mTotalPages = 5;
@@ -40,14 +45,14 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    mProgressBar = findViewById(R.id.progressbar);
+    //Now showing
     mNowShowingMovies = new ArrayList<>();
-    mRecyclerView = findViewById(R.id.recyclerview);
+    mRvNowShowing = findViewById(R.id.rvnowshowing);
     mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-    mRecyclerView.setLayoutManager(mLinearLayoutManager);
+    mRvNowShowing.setLayoutManager(mLinearLayoutManager);
     mNowShowingAdapter = new NowShowingAdapter(this, mNowShowingMovies);
-    mRecyclerView.setAdapter(mNowShowingAdapter);
-    mRecyclerView.addOnScrollListener(new PaginationListener(mLinearLayoutManager) {
+    mRvNowShowing.setAdapter(mNowShowingAdapter);
+    mRvNowShowing.addOnScrollListener(new PaginationListener(mLinearLayoutManager) {
       @Override
       protected void loadMoreItems() {
         isLoading = true;
@@ -70,11 +75,47 @@ public class MainActivity extends AppCompatActivity {
         return isLoading;
       }
     });
+
+    //Popular movies
+    mPopularMovies = new ArrayList<>();
+    mPopularMoviesAdapter = new PopularMoviesAdapter(this, mPopularMovies);
+    mRvPopular = findViewById(R.id.rvpopular);
+    mRvPopular.setAdapter(mPopularMoviesAdapter);
+    mRvPopular
+        .setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
     //Load Genres
     if (!GenreMap.isGenreListLoaded()) {
       loadGenres();
     }
+    //loads first page of Now showing
     loadFirstPage();
+    //loads first page of popular movies
+    loadFirstPageOfPopularMovies();
+  }
+
+  private void loadFirstPageOfPopularMovies() {
+    MoviesApiClient.getClient().create(MoviesApi.class)
+        .getPopularMovies(getResources().getString(R.string.API_KEY), 1).enqueue(
+        new Callback<NowShowingMoviesResults>() {
+          @Override
+          public void onResponse(Call<NowShowingMoviesResults> call,
+              Response<NowShowingMoviesResults> response) {
+            if (response.isSuccessful()) {
+              for (NowShowingMovies popularMovie : response.body().getResults()) {
+                if (popularMovie != null && popularMovie.getBackdropPath() != null) {
+                  mPopularMovies.add(popularMovie);
+                }
+              }
+              mPopularMoviesAdapter.notifyDataSetChanged();
+            }
+          }
+
+          @Override
+          public void onFailure(Call<NowShowingMoviesResults> call, Throwable t) {
+            Log.i(TAG, t.getMessage());
+          }
+        });
   }
 
   private Call<NowShowingMoviesResults> makeAPICall() {
@@ -87,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void onResponse(Call<NowShowingMoviesResults> call,
           Response<NowShowingMoviesResults> response) {
-        Log.i(TAG, "in Response-now showing movies");
         if (response.isSuccessful()) {
           //total pages declared as 5
 //          mTotalPages = response.body().getTotalPages();
@@ -151,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
           GenreMap.loadGenresList(response.body().getGenres());
         }
       }
+
       @Override
       public void onFailure(Call<GenreList> call, Throwable t) {
         Log.i(TAG, t.getMessage());
