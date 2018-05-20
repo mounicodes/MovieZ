@@ -4,8 +4,8 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:scrollbars="horizontal"
-  android:orientation="horizontal">
+  android:orientation="horizontal"
+  android:scrollbars="horizontal">
 
   <ProgressBar
     android:id="@+id/progressbar"
@@ -18,8 +18,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:contentDescription="@string/movie"
-    app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     />
 
@@ -29,10 +29,10 @@
     android:layout_height="wrap_content"
     android:layout_margin="1dp"
     android:textSize="15sp"
-    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintBottom_toTopOf="@id/genre"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/moviebackdrop"
-    app:layout_constraintBottom_toTopOf="@id/genre"/>
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/moviebackdrop"/>
 
   <TextView
     android:id="@+id/genre"
@@ -40,10 +40,10 @@
     android:layout_height="wrap_content"
     android:layout_margin="1dp"
     android:textSize="15sp"
-    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintBottom_toTopOf="@id/voteaverage"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/movietitle"
-    app:layout_constraintBottom_toTopOf="@id/voteaverage"/>
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/movietitle"/>
 
   <TextView
     android:id="@+id/voteaverage"
@@ -51,9 +51,9 @@
     android:layout_height="wrap_content"
     android:layout_margin="1dp"
     android:textSize="15sp"
-    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/genre"
-    app:layout_constraintBottom_toBottomOf="parent"/>
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/genre"/>
 
 </android.support.constraint.ConstraintLayout>

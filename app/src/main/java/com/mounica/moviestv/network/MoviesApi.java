@@ -17,4 +17,7 @@ public interface MoviesApi {
   //get all genres
   @GET("genre/movie/list")
   Call<GenreList> getGenreList(@Query("api_key") String apiKey);
+  //Popular movies
+  @GET("movie/popular")
+  Call<NowShowingMoviesResults> getPopularMovies(@Query("api_key") String apiKey, @Query("page") Integer page);
 }
