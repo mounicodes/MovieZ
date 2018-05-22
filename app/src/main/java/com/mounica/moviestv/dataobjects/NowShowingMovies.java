@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by mounicachikkam on 5/4/18.
+ * Movies info - same for Nowshowing,popular and upcoming
  */
 
 public class NowShowingMovies {

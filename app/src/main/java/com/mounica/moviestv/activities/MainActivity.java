@@ -5,13 +5,12 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.Toast;
 import com.mounica.moviestv.R;
 import com.mounica.moviestv.adapter.NowShowingAdapter;
 import com.mounica.moviestv.adapter.PaginationListener;
 import com.mounica.moviestv.adapter.PopularMoviesAdapter;
+import com.mounica.moviestv.adapter.UpcomingMoviesAdapter;
 import com.mounica.moviestv.dataobjects.GenreList;
 import com.mounica.moviestv.dataobjects.NowShowingMovies;
 import com.mounica.moviestv.dataobjects.NowShowingMoviesResults;
@@ -24,16 +23,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Main Activity displays Now Showing, Popular and Upcoming Movies
+ */
+
 public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = "MainActivity";
   private List<NowShowingMovies> mNowShowingMovies;
   private List<NowShowingMovies> mPopularMovies;
-  private ScrollView mScrollView;
-  private RecyclerView mRvNowShowing, mRvPopular;
+  private List<NowShowingMovies> mUpcomingMovies;
+  private RecyclerView mRvNowShowing, mRvPopular, mRvUpcoming;
   private NowShowingAdapter mNowShowingAdapter;
   private PopularMoviesAdapter mPopularMoviesAdapter;
-  private ProgressBar mProgressBar;
+  private UpcomingMoviesAdapter mUpcomingMoviesAdapter;
   private LinearLayoutManager mLinearLayoutManager;
   private int mTotalPages = 5;
   private int mCurrentPage = 1;
@@ -84,14 +87,48 @@ public class MainActivity extends AppCompatActivity {
     mRvPopular
         .setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
+    //Upcoming movies
+    mUpcomingMovies = new ArrayList<>();
+    mRvUpcoming = findViewById(R.id.rvupcoming);
+    mUpcomingMoviesAdapter = new UpcomingMoviesAdapter(this, mUpcomingMovies);
+    mRvUpcoming.setAdapter(mUpcomingMoviesAdapter);
+    mRvUpcoming
+        .setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
     //Load Genres
     if (!GenreMap.isGenreListLoaded()) {
       loadGenres();
     }
-    //loads first page of Now showing
+    //Load First page of Now Showing
     loadFirstPage();
-    //loads first page of popular movies
+    //Load Popular Movies
     loadFirstPageOfPopularMovies();
+    //Load Upcoming Movies
+    loadUpcomingMovies();
+  }
+
+  private void loadUpcomingMovies() {
+    MoviesApiClient.getClient().create(MoviesApi.class)
+        .getUpcomingMovies(getResources().getString(R.string.API_KEY), 1, "US").enqueue(
+        new Callback<NowShowingMoviesResults>() {
+          @Override
+          public void onResponse(Call<NowShowingMoviesResults> call,
+              Response<NowShowingMoviesResults> response) {
+            if (response.isSuccessful()) {
+              for (NowShowingMovies upcomingMovie : response.body().getResults()) {
+                if (upcomingMovie != null && upcomingMovie.getPosterPath() != null) {
+                  mUpcomingMovies.add(upcomingMovie);
+                }
+              }
+              mUpcomingMoviesAdapter.notifyDataSetChanged();
+            }
+          }
+
+          @Override
+          public void onFailure(Call<NowShowingMoviesResults> call, Throwable t) {
+            Log.i(TAG, t.getMessage());
+          }
+        });
   }
 
   private void loadFirstPageOfPopularMovies() {
@@ -129,8 +166,7 @@ public class MainActivity extends AppCompatActivity {
       public void onResponse(Call<NowShowingMoviesResults> call,
           Response<NowShowingMoviesResults> response) {
         if (response.isSuccessful()) {
-          //total pages declared as 5
-//          mTotalPages = response.body().getTotalPages();
+          //5 Pages
           for (NowShowingMovies movieBrief : response.body().getResults()) {
             if (movieBrief != null && movieBrief.getBackdropPath() != null) {
               mNowShowingMovies.add(movieBrief);
@@ -140,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
             isLastPage = true;
           }
           mNowShowingAdapter.notifyDataSetChanged();
-          //TODO implement looping through all pages
         }
       }
 

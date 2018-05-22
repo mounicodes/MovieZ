@@ -3,12 +3,10 @@ package com.mounica.moviestv.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.mounica.moviestv.R;
@@ -16,6 +14,10 @@ import com.mounica.moviestv.dataobjects.NowShowingMovies;
 import com.mounica.moviestv.helper.Constants;
 import com.mounica.moviestv.helper.GenreMap;
 import java.util.List;
+
+/**
+ * Adapter for Now showing movies
+ */
 
 public class NowShowingAdapter extends
     RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -97,6 +99,8 @@ public class NowShowingAdapter extends
       mGenre = itemView.findViewById(R.id.genre);
       mVoteAverage = itemView.findViewById(R.id.voteaverage);
       mTitle = itemView.findViewById(R.id.movietitle);
+      mBackDrop.getLayoutParams().width = (int) (mContext.getResources().getDisplayMetrics().widthPixels *0.9);
+      mBackDrop.getLayoutParams().height = (int) ((mContext.getResources().getDisplayMetrics().widthPixels * 0.9) / 1.77);
     }
   }
 

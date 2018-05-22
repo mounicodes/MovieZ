@@ -7,7 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 /**
- * Created by mounicachikkam on 5/8/18.
+ * API Interface
  */
 
 public interface MoviesApi {
@@ -20,4 +20,7 @@ public interface MoviesApi {
   //Popular movies
   @GET("movie/popular")
   Call<NowShowingMoviesResults> getPopularMovies(@Query("api_key") String apiKey, @Query("page") Integer page);
+  //upcoming movies
+  @GET("movie/upcoming")
+  Call<NowShowingMoviesResults> getUpcomingMovies(@Query("api_key") String apiKey, @Query("page") Integer page, @Query("region") String region);
 }

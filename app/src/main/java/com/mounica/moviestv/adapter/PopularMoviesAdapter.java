@@ -16,7 +16,7 @@ import com.mounica.moviestv.helper.Constants;
 import java.util.List;
 
 /**
- * TODO: Write class purpose
+ * Adapter for Popular Movies
  */
 public class PopularMoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -43,6 +43,7 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<RecyclerView.View
     Glide.with(mContext)
         .load(Constants.BASE_URL_MOVIEBACKDROP_780 + popularMovie.getBackdropPath())
         .asBitmap()
+        .centerCrop()
         .into(popularViewHolder.mPopularImage);
   }
 
@@ -60,6 +61,13 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<RecyclerView.View
       super(itemView);
       mPopularImage = itemView.findViewById(R.id.popularimage);
       mPopularTitle = itemView.findViewById(R.id.populartitle);
+
+      mPopularTitle.getLayoutParams().width = (int) (
+          mContext.getResources().getDisplayMetrics().widthPixels * 0.45);
+      mPopularImage.getLayoutParams().width = (int) (
+          mContext.getResources().getDisplayMetrics().widthPixels * 0.45);
+      mPopularImage.getLayoutParams().height = (int) (
+          (mContext.getResources().getDisplayMetrics().widthPixels * 0.45) / 0.70);
     }
   }
 }
