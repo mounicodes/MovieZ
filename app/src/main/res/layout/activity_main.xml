@@ -10,24 +10,21 @@
 
   <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <TextView
       android:id="@+id/nowplayingtext"
+      style="@style/ItemHeader"
       android:layout_width="match_parent"
-      android:layout_height="30dp"
-      android:text="@string/nowplaying"
-      android:textSize="15sp"/>
+      android:layout_height="wrap_content"
+      android:text="@string/nowplaying"/>
 
     <android.support.v7.widget.RecyclerView
       android:id="@+id/rvnowshowing"
-      android:layout_width="wrap_content"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
-      android:layout_marginBottom="8dp"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="8dp"
-      android:padding="10dp"
+      android:paddingLeft="5dp"
+      android:paddingRight="5dp"
       android:scrollbars="horizontal"
       app:layout_constraintBottom_toTopOf="@id/populartext"
       app:layout_constraintEnd_toEndOf="parent"
@@ -36,13 +33,11 @@
 
     <TextView
       android:id="@+id/populartext"
+      style="@style/ItemHeader"
       android:layout_width="match_parent"
-      android:layout_height="30dp"
+      android:layout_height="wrap_content"
       android:text="@string/popular"
-      android:textSize="15sp"
       app:layout_constraintBottom_toTopOf="@id/rvpopular"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="1.0"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/rvnowshowing"/>
 
@@ -50,16 +45,34 @@
       android:id="@+id/rvpopular"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
-      android:layout_marginBottom="8dp"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="8dp"
-      android:padding="10dp"
+      android:paddingLeft="5dp"
+      android:paddingRight="5dp"
       android:scrollbars="horizontal"
-      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintBottom_toTopOf="@id/upcoming"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/populartext"/>
+
+    <TextView
+      android:id="@+id/upcoming"
+      style="@style/ItemHeader"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Upcoming"
+      app:layout_constraintBottom_toTopOf="@+id/rvupcoming"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/rvpopular"/>
+
+    <android.support.v7.widget.RecyclerView
+      android:id="@+id/rvupcoming"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingLeft="5dp"
+      android:paddingRight="5dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/upcoming"/>
 
   </android.support.constraint.ConstraintLayout>
 </ScrollView>

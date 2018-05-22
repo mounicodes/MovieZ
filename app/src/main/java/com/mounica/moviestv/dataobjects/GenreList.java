@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by mounicachikkam on 5/10/18.
+ * Genre List
  */
 
 public class GenreList {

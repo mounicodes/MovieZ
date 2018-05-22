@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by mounicachikkam on 5/9/18.
+ * Genre
  */
 
 public class Genre {

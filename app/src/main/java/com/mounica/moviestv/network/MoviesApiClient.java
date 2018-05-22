@@ -6,7 +6,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by mounicachikkam on 5/9/18.
+ * Creates and returns API Client
  */
 
 public class MoviesApiClient {

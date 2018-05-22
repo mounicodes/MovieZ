@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by mounicachikkam on 5/9/18.
+ * Maps the Genres with Genre Ids
  */
 
 public class GenreMap {

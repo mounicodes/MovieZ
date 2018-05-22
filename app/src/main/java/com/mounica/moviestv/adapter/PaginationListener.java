@@ -4,7 +4,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 /**
- * Created by mounicachikkam on 5/14/18.
+ * Used for Infinite scrolling
  */
 
 public abstract class PaginationListener extends RecyclerView.OnScrollListener {
@@ -36,6 +36,5 @@ public abstract class PaginationListener extends RecyclerView.OnScrollListener {
   public abstract boolean isLastPage();
 
   public abstract boolean isLoading();
-
 
 }
