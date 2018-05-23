@@ -1,7 +1,7 @@
 package com.mounica.moviestv.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.support.annotation.*;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,9 +65,9 @@ public class NowShowingAdapter extends
         List<Integer> genreIds = movie.getGenreIds();
         String genreText = "";
         for (Integer genreId : genreIds) {
-          genreText += GenreMap.getGenreName(genreId) + ",";
+          genreText += GenreMap.getGenreName(genreId) + ", ";
         }
-        moviesHolder.mGenre.setText(genreText.substring(0, genreText.length() - 1));
+        moviesHolder.mGenre.setText(genreText.substring(0, genreText.length() - 2));
         moviesHolder.mVoteAverage.setText(Double.toString(movie.getVoteAverage()));
         break;
       case LOADING:
