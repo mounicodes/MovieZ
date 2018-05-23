@@ -13,6 +13,9 @@ import com.bumptech.glide.Glide;
 import com.mounica.moviestv.R;
 import com.mounica.moviestv.dataobjects.NowShowingMovies;
 import com.mounica.moviestv.helper.Constants;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,7 +43,13 @@ public class UpcomingMoviesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     NowShowingMovies movie = mUpcomingMovies.get(position);
     UpcomingViewHolder upcomingViewHolder = (UpcomingViewHolder) holder;
-    upcomingViewHolder.mReleaseDate.setText(movie.getReleaseDate());
+    //format date MMM D YYYY
+    Calendar cal = Calendar.getInstance();
+    cal.set(Calendar.YEAR,Integer.parseInt(movie.getReleaseDate().substring(0,4)));
+    cal.set(Calendar.MONTH,Integer.parseInt(movie.getReleaseDate().substring(5,7)));
+    cal.set(Calendar.DATE,Integer.parseInt(movie.getReleaseDate().substring(8)));
+    String formatDate = new SimpleDateFormat("MMM d, yyyy").format(cal.getTime());
+    upcomingViewHolder.mReleaseDate.setText(formatDate);
     Glide.with(mContext)
         .load(Constants.BASE_URL_MOVIEBACKDROP_780+movie.getPosterPath())
         .asBitmap()
